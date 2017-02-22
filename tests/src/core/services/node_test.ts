@@ -67,7 +67,7 @@ describe('NodeService', () => {
             });
         });
 
-        it('should return list of nodes given existing cluster name', () => {
+        it('should return list of nodes given non-existing cluster name', () => {
             return nodeService.findByClusterName(nonExistingClusterName).then((result: Node[]) => {
                 expect(result).to.be.not.null;
                 expect(result.length).to.be.eq(0);
