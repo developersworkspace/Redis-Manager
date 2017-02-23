@@ -11,6 +11,8 @@
   "dependencies": {
     "@types/mongodb": "^2.1.40",
     "@types/redis": "^0.12.36",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-typescript": "^3.1.4",
