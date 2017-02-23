@@ -1,0 +1,41 @@
+<div id="wrapper">
+  <div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+      <li class="sidebar-brand">
+        <a href="/">Redis Manager</a>
+      </li>
+      <li *ngFor="let item of clusters">
+        <a (click)="onClick_SelectClusterName(item)">{{item}}</a>
+      </li>
+    </ul>
+  </div>
+  <div id="page-content-wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <p *ngIf="selectedClusterName == null">No cluster selected</p>
+        <div class="col-md-12" *ngIf="selectedClusterName != null">
+          <h1>{{selectedClusterName}}</h1>
+          <h3>Nodes</h3>
+          <div class="row">
+            <div class="col-md-3" *ngFor="let item of nodes">
+              <span>
+                <label>IP Address: </label>
+                {{item.ipAddress}}
+                </span>
+                <br />
+              <span>
+                <label>Port: </label>
+                {{item.port}}
+                </span>
+                <br />
+              <span>
+                <label>Is Active: </label>
+                {{item.isActive}}
+                </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
