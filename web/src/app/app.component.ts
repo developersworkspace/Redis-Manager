@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
         ipAddress: "RedisServer1",
         port: 7001,
         clusterName: "Staging",
-        isActive: true
+        isActive: false
       },
       {
         ipAddress: "RedisServer1",
@@ -38,6 +38,22 @@ export class AppComponent implements OnInit {
   }
 
   onClick_SelectClusterName(clusterName) {
+    this.refreshNodes();
     this.selectedClusterName = clusterName;
+  }
+
+  refreshNodes() {
+    this.nodes = null;
+    setTimeout(() => {
+      this.nodes = [];
+      for (let i = 0; i < Math.round(Math.random() * 50); i++) {
+        this.nodes.push({
+          ipAddress: "RedisServer1",
+          port: 700 + i,
+          clusterName: "Staging",
+          isActive: Math.random() < 0.5
+        });
+      }
+    }, 3000);
   }
 }

@@ -12,26 +12,27 @@
   <div id="page-content-wrapper">
     <div class="container-fluid">
       <div class="row">
-        <p *ngIf="selectedClusterName == null">No cluster selected</p>
+        <h1 *ngIf="selectedClusterName == null">No cluster selected</h1>
         <div class="col-md-12" *ngIf="selectedClusterName != null">
           <h1>{{selectedClusterName}}</h1>
+          <h3>Details</h3>
+          <label>Used Memory: </label> 1324235 bytes (11 MB)
+          <br />
+          <label>Expired Keys: </label> 6372
+          <br />
+          <label>Evicted Keys: </label> 204
+          <br />
+          <label>Connected Clients: </label> 42
+          <br />
           <h3>Nodes</h3>
-          <div class="row">
+          <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="nodes == null"/>
+          <div class="row" *ngIf="nodes != null">
             <div class="col-md-3" *ngFor="let item of nodes">
-              <span>
-                <label>IP Address: </label>
-                {{item.ipAddress}}
-                </span>
-                <br />
-              <span>
-                <label>Port: </label>
-                {{item.port}}
-                </span>
-                <br />
-              <span>
-                <label>Is Active: </label>
-                {{item.isActive}}
-                </span>
+              <img src="/assets/images/redis.png" class="{{item.isActive? '' : 'grayscale'}}" height="70" width="70" />
+              <br />
+              <label>IP Address: </label> {{item.ipAddress}}
+              <br />
+              <label>Port: </label>{{item.port}}
             </div>
           </div>
         </div>
