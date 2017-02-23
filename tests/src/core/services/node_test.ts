@@ -41,22 +41,22 @@ describe('NodeService', () => {
         mongoClient.connect(config.mongoUrl, (err: Error, db: mongodb.Db) => {
             let nodeCollection = db.collection('nodes');
             nodeCollection.remove({}, (err: Error) => {
-                nodeService.createNode(existingClusterName, existingIpAddress, existingPort).then((result: Boolean) => {
+                nodeService.create(existingClusterName, existingIpAddress, existingPort).then((result: Boolean) => {
                     done();
                 });
             });
         });
     });
 
-    describe('createNode', () => {
+    describe('create', () => {
         it('should return true given ip address, port and cluster name where ip address and port does not exist', () => {
-            return nodeService.createNode(existingClusterName, nonExistingIpAddress, nonExistingPort).then((result: Boolean) => {
+            return nodeService.create(existingClusterName, nonExistingIpAddress, nonExistingPort).then((result: Boolean) => {
                 expect(result).to.be.true;
             });
         });
 
         it('should return false given ip address, port and cluster name where ip address and port does exist', () => {
-            return nodeService.createNode(existingClusterName, existingIpAddress, existingPort).then((result: Boolean) => {
+            return nodeService.create(existingClusterName, existingIpAddress, existingPort).then((result: Boolean) => {
                 expect(result).to.be.false;
             });
         });
@@ -82,25 +82,6 @@ describe('NodeService', () => {
         it('should return true given ip address and port of active node', () => {
             return nodeService.getStatus(existingIpAddress, existingPort).then((result: Boolean) => {
                 expect(result).to.be.true;
-            });
-        });
-    });
-
-    describe('getClusterDetails', () => {
-
-        beforeEach(function () {
-            let config = {
-                mongoUrl: 'mongodb://localhost:27017/myproject'
-            };
-
-            let mongoClient = mongodb.MongoClient;
-            let redisClient = redisIntegration;
-            nodeService = new NodeService(redisClient, mongoClient, config);
-        });
-
-        it('should return true given ip address and port of active node', () => {
-            return nodeService.getClusterDetails(existingClusterName).then((result: any) => {
-                console.log(result);
             });
         });
     });

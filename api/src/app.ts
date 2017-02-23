@@ -36,6 +36,10 @@ export class WebApi {
     public run() {
         this.app.listen(this.port);
     }
+
+    public getApp() {
+        return this.app;
+    }
 }
 
 
