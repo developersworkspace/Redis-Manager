@@ -6,6 +6,7 @@ import * as mongodb from 'mongodb';
 
 // Imports routes
 import * as nodeRoute from './routes/node';
+import * as clusterRoute from './routes/cluster';
 
 // Imports middleware
 // NONE
@@ -31,6 +32,7 @@ export class WebApi {
 
     private configureRoutes(app: express.Express) {
         app.use("/api/node", nodeRoute);
+         app.use("/api/cluster", clusterRoute);
     }
 
     public run() {

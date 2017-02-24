@@ -48,47 +48,26 @@ describe('ROUTES', () => {
       });
   });
 
-  describe('POST /api/node/create', () => {
-    it('responds with true given non-existing ip address and port', () => {
+  describe('GET /api/cluster/list', () => {
+    it('responds with list of cluster names', () => {
       return request(webApi.getApp())
-        .post('/api/node/create')
-        .type('json')
-        .send(JSON.stringify({
-          clusterName: 'Non-Existing-Cluster',
-          ipAddress: '0.0.0.0',
-          port: 6379
-        }))
+        .get('/api/cluster/list')
         .expect(200)
         .then(response => {
-          expect(response.body).to.be.true;
-        });
-    });
-
-    it('responds with false given existing ip address and port', () => {
-      return request(webApi.getApp())
-        .post('/api/node/create')
-        .type('json')
-        .send(JSON.stringify({
-          clusterName: 'Existing-Cluster',
-          ipAddress: '127.0.0.1',
-          port: 6379
-        }))
-        .expect(200)
-        .then(response => {
-          expect(response.body).to.be.false;
+          expect(response.body).to.be.not.null;
+          expect(response.body.length).to.be.eq(1);
         });
     });
   });
 
 
-  describe('POST /api/node/list', () => {
-    it('responds with list of node given cluster name', () => {
+  describe('GET /api/cluster/details', () => {
+    it('responds with cluster details', () => {
       return request(webApi.getApp())
-        .get('/api/node/list?clusterName=Existing-Cluster')
+        .get('/api/cluster/details?clusterName=Existing-Cluster')
         .expect(200)
         .then(response => {
           expect(response.body).to.be.not.null;
-          expect(response.body.length).to.be.eq(1);
         });
     });
   });

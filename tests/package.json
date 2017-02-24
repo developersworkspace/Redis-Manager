@@ -20,6 +20,7 @@
     "gulp-typescript": "^3.1.4",
     "mocha": "^3.2.0",
     "mongo-mock": "^2.1.1",
+    "mongodb": "^2.2.24",
     "redis-mock": "^0.16.0",
     "supertest": "^3.0.0",
     "ts-node": "^2.1.0",

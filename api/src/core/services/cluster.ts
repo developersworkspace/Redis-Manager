@@ -29,16 +29,11 @@ export class ClusterService {
                         , {
                             $group:
                             {
-                                _id: {
-                                    "userAgent": "$clusterName"
-                                },
-                                list: {
-                                    $push: '$clusterName'
-                                }
+                                _id: '$clusterName'
                             }
                         }
-                    ]).toArray((err: Error, result: Node[]) => {
-                        resolve(result);
+                    ]).toArray((err: Error, results: any[]) => {
+                        resolve(results.filter(x => x._id != null).map(x => x._id));
                         db.close();
                     });
                 }
@@ -49,7 +44,6 @@ export class ClusterService {
 
     details(clusterName: string) {
         return this.listNodes(clusterName).then((nodes: Node[]) => {
-
             let promisesList = nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
 
             return Promise.all(promisesList).then((values: any[]) => {
