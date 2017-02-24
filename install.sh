@@ -1,25 +1,25 @@
 # -- INSTALL DOCKER --
 
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
-apt-get update & apt-cache policy docker-engine
-apt-get install -y docker-engine
+sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+sudo apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
+sudo apt-get update & apt-cache policy docker-engine
+sudo apt-get install -y docker-engine
 
 # -- INSTALL DOCKER-COMPOSE --
 
-curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)"
-chmod +x /usr/local/bin/docker-compose
+sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)"
+sudo chmod +x /usr/local/bin/docker-compose
 
 # -- BUILD AND INSTALL REDIS MANAGER --
 
 # Update machine package indexes
-apt-get update
+sudo apt-get update
 
 # Download and run script to install node 7
-curl -sL https://deb.nodesource.com/setup_7.x | bash -
+sudo curl -sL https://deb.nodesource.com/setup_7.x | bash -
 
 # Install node 7
-apt-get install -y nodejs
+sudo apt-get install -y nodejs
 
 # Install 'typescript' node package
 npm install -g typescript
@@ -57,20 +57,19 @@ cd ./../
 # Build and run docker compose as deamon
 docker-compose up -d
 
-
 # -- INSTALL NGINX --
 
 # Update machine package indexes
-apt-get update
+sudo apt-get update
 
 # Install NGINX
-apt-get install -y nginx
+sudo apt-get install -y nginx
 
 # Add rule to firewall
-ufw allow 'Nginx HTTP'
+sudo ufw allow 'Nginx HTTP'
 
 # Download nginx.conf to NGINX directory
-curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/nginx.conf
+sudo curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/nginx.conf
 
 # Restart NGINX
-systemctl restart nginx
+sudo systemctl restart nginx
