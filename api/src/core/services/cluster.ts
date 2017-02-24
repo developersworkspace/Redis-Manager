@@ -114,10 +114,10 @@ export class ClusterService {
                 });
 
                 resolve({
-                    used_memory: arr.filter(z => z.key == 'used_memory')[0].value,
-                    expired_keys: arr.filter(z => z.key == 'expired_keys')[0].value,
-                    evicted_keys: arr.filter(z => z.key == 'evicted_keys')[0].value,
-                    connected_clients: arr.filter(z => z.key == 'connected_clients')[0].value,
+                    used_memory: parseFloat(arr.filter(z => z.key == 'used_memory')[0].value),
+                    expired_keys: parseFloat(arr.filter(z => z.key == 'expired_keys')[0].value),
+                    evicted_keys: parseFloat(arr.filter(z => z.key == 'evicted_keys')[0].value),
+                    connected_clients: parseFloat(arr.filter(z => z.key == 'connected_clients')[0].value),
                     role: arr.filter(z => z.key == 'role')[0].value
                 });
             });
