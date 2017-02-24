@@ -14,7 +14,7 @@ services:
         build: web
         ports:
         # Fowards host port to 'web'
-        - "80:80"
+        - "8080:8080"
     mongo:
         # Uses mongo image from Docker hub
         image: "mongo"
