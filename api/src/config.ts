@@ -1,3 +1,3 @@
 export var config = {
-    mongoUrl: "mongodb://localhost:27017/redismanager1"
+    mongoUrl: "mongodb://mongo:27017/redis_manager_prod"
 }

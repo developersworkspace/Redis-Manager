@@ -92,9 +92,9 @@ describe('NodeService', () => {
         });
     });
 
-    describe('getStatus', () => {
+    describe('status', () => {
         it('should return true given ip address and port of active node', () => {
-            return nodeService.getStatus(existingIpAddress, existingPort).then((result: Boolean) => {
+            return nodeService.status(existingIpAddress, existingPort).then((result: Boolean) => {
                 expect(result).to.be.true;
             });
         });

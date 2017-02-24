@@ -4,6 +4,9 @@
       <li class="sidebar-brand">
         <a href="/">Redis Manager</a>
       </li>
+      <li>
+        <a (click)="onClick_SelectClusterName(null)">Create new node</a>
+      </li>
       <li *ngFor="let item of clusters">
         <a (click)="onClick_SelectClusterName(item)">{{item}}</a>
       </li>
@@ -12,20 +15,35 @@
   <div id="page-content-wrapper">
     <div class="container-fluid">
       <div class="row">
-        <h1 *ngIf="selectedClusterName == null">No cluster selected</h1>
+        <div class="col-md-12" *ngIf="selectedClusterName == null">
+          <h2>Create new node</h2>
+          <div class="form-group">
+            <label for="clusterName">Cluster Name:</label>
+            <input type="text" [(ngModel)]="newNodeClusterName" class="form-control" id="clusterName">
+          </div>
+          <div class="form-group">
+            <label for="ipAddress">IP Address:</label>
+            <input type="text" [(ngModel)]="newNodeIpAddress" class="form-control" id="ipAddress">
+          </div>
+          <div class="form-group">
+            <label for="port">Port:</label>
+            <input type="text" [(ngModel)]="newNodePort" class="form-control" id="port">
+          </div>
+          <button class="btn btn-success" (click)="onClick_CreateNewNode()">Create new Node</button>
+        </div>
         <div class="col-md-12" *ngIf="selectedClusterName != null">
           <h1>{{selectedClusterName}}</h1>
           <h3>Details</h3>
-          <label>Used Memory: </label> 1324235 bytes (11 MB)
+          <label>Connected Clients: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.connected_clients}}</span>
           <br />
-          <label>Expired Keys: </label> 6372
+          <label>Expired Keys: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.expired_keys}}</span>
           <br />
-          <label>Evicted Keys: </label> 204
+          <label>Evicted Keys: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.evicted_keys}}</span>
           <br />
-          <label>Connected Clients: </label> 42
+          <label>Memory Used: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.used_memory}}</span>
           <br />
           <h3>Nodes</h3>
-          <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="nodes == null"/>
+          <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="nodes == null" />
           <div class="row" *ngIf="nodes != null">
             <div class="col-md-3" *ngFor="let item of nodes">
               <img src="/assets/images/redis.png" class="{{item.isActive? '' : 'grayscale'}}" height="70" width="70" />

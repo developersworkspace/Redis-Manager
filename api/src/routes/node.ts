@@ -18,7 +18,7 @@ router.get('/list', (req: Request, res: Response, next: Function) => {
     nodeService.list(req.query.clusterName).then((result: any[]) => {
         res.json(result);
     }).catch((err: Error) => {
-        res.status(500).send('Error');
+        res.status(500).send(err.message);
     });
 });
 
@@ -27,7 +27,7 @@ router.post('/create', (req: Request, res: Response, next: Function) => {
     nodeService.create(req.body.clusterName, req.body.ipAddress, req.body.port).then((result: any) => {
         res.json(result);
     }).catch((err: Error) => {
-        res.status(500).send('Error');
+        res.status(500).send(err.message);
     });
 });
 
@@ -37,9 +37,19 @@ router.post('/delete', (req: Request, res: Response, next: Function) => {
     nodeService.delete(req.body.clusterName, req.body.ipAddress, req.body.port).then((result: any) => {
         res.json(result);
     }).catch((err: Error) => {
-        res.status(500).send('Error');
+        res.status(500).send(err.message);
     });
 });
 
+
+router.get('/status', (req: Request, res: Response, next: Function) => {
+    let nodeService = new NodeService(redis, mongodb.MongoClient, config);
+
+    nodeService.status(req.query.ipAddress, req.query.port).then((result: any) => {
+        res.json(result);
+    }).catch((err: Error) => {
+        res.status(500).send(err.message);
+    });
+});
 
 export = router;

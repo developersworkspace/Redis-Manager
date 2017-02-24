@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": " gulp ts & node ./src/app.js",
+    "build": " gulp build"
   },
   "author": "Barend Erasmus",
   "license": "MIT",
@@ -12,6 +13,7 @@
     "@types/mongodb": "^2.1.40",
     "@types/redis": "^0.12.36",
     "body-parser": "^1.16.1",
+    "cors": "^2.8.1",
     "express": "^4.14.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",

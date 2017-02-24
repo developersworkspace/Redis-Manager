@@ -1,0 +1,20 @@
+version: '2'
+services:
+    api:
+        # Uses Dockerfile in 'api'
+        build: api
+        ports:
+        # Fowards host port to 'api'
+        - "3000:3000"
+        links: 
+        # Links 'mongo' container to 'api'
+        - mongo
+    web:
+        # Uses Dockerfile in 'web'
+        build: web
+        ports:
+        # Fowards host port to 'web'
+        - "80:80"
+    mongo:
+        # Uses mongo image from Docker hub
+        image: "mongo"

@@ -18,8 +18,7 @@ router.get('/details', (req: Request, res: Response, next: Function) => {
     clusterService.details(req.query.clusterName).then((result: any) => {
         res.json(result);
     }).catch((err: Error) => {
-        console.log(err);
-        res.status(500).send('Error');
+        res.status(500).send(err.message);
     });
 });
 
@@ -30,7 +29,7 @@ router.get('/list', (req: Request, res: Response, next: Function) => {
     clusterService.list().then((result: any[]) => {
         res.json(result);
     }).catch((err: Error) => {
-        res.status(500).send('Error');
+        res.status(500).send(err.message);
     });
 });
 

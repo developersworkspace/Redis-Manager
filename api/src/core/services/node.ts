@@ -101,11 +101,15 @@ export class NodeService {
         });
     }
 
-    getStatus(ipAddress: string, port: number) {
+    status(ipAddress: string, port: number) {
         return new Promise((resolve: Function, reject: Function) => {
             let redisClient: redis.RedisClient = this.redisProvider.createClient({
                 host: ipAddress,
                 port: port
+            });
+
+            redisClient.on('error', function (err) {
+                resolve(false);
             });
 
             redisClient.ping((err: Error, result: any) => {

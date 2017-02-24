@@ -47,17 +47,18 @@ export class ClusterService {
             let promisesList = nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
 
             return Promise.all(promisesList).then((values: any[]) => {
+                values = values.filter(x => x.role == 'master');
                 return {
-                    used_memory: values.filter(x => x.role == 'master').map(x => x.used_memory).reduce((a, b) => {
+                    used_memory: values.length == 0 ? 0 : values.map(x => x.used_memory).reduce((a, b) => {
                         return a + b;
                     }),
-                    expired_keys: values.filter(x => x.role == 'master').map(x => x.expired_keys).reduce((a, b) => {
+                    expired_keys: values.length == 0 ? 0 : values.map(x => x.expired_keys).reduce((a, b) => {
                         return a + b;
                     }),
-                    evicted_keys: values.filter(x => x.role == 'master').map(x => x.evicted_keys).reduce((a, b) => {
+                    evicted_keys: values.length == 0 ? 0 : values.map(x => x.evicted_keys).reduce((a, b) => {
                         return a + b;
                     }),
-                    connected_clients: values.map(x => x.connected_clients).reduce((a, b) => {
+                    connected_clients: values.length == 0 ? 0 : values.map(x => x.connected_clients).reduce((a, b) => {
                         return a + b;
                     })
                 };
@@ -94,8 +95,17 @@ export class ClusterService {
                 port: port
             });
 
-            redisClient.info((err: Error, result: any) => {
+            redisClient.on('error', function (err) {
+                resolve({
+                    used_memory: 0,
+                    expired_keys: 0,
+                    evicted_keys: 0,
+                    connected_clients: 0,
+                    role: null
+                });
+            });
 
+            redisClient.info((err: Error, result: any) => {
                 let arr = result.split(/\r?\n/).map(x => {
                     return {
                         key: x.split(':')[0],
@@ -111,7 +121,6 @@ export class ClusterService {
                     role: arr.filter(z => z.key == 'role')[0].value
                 });
             });
-
         });
     }
 

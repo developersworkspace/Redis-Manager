@@ -2,6 +2,7 @@
 import express = require("express");
 import bodyParser = require("body-parser");
 import * as mongodb from 'mongodb';
+import * as cors from 'cors';
 
 
 // Imports routes
@@ -21,18 +22,19 @@ export class WebApi {
     }
 
     private init() {
-       
-        
+
+
     }
 
     private configureMiddleware(app: express.Express) {
         app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: false }));      
+        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(cors());
     }
 
     private configureRoutes(app: express.Express) {
         app.use("/api/node", nodeRoute);
-         app.use("/api/cluster", clusterRoute);
+        app.use("/api/cluster", clusterRoute);
     }
 
     public run() {
