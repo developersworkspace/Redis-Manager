@@ -62,6 +62,20 @@ describe('NodeService', () => {
         });
     });
 
+    describe('delete', () => {
+        it('should return false given ip address, port and cluster name where ip address and port does not exist', () => {
+            return nodeService.delete(existingClusterName, nonExistingIpAddress, nonExistingPort).then((result: Boolean) => {
+                expect(result).to.be.false;
+            });
+        });
+
+        it('should return false given ip address, port and cluster name where ip address and port does exist', () => {
+            return nodeService.delete(existingClusterName, existingIpAddress, existingPort).then((result: Boolean) => {
+                expect(result).to.be.true;
+            });
+        });
+    });
+
     describe('list', () => {
         it('should return list of nodes given existing cluster name', () => {
             return nodeService.list(existingClusterName).then((result: Node[]) => {

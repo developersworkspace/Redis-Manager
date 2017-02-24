@@ -15,8 +15,40 @@ export class ClusterService {
         this.mongoUrl = config.mongoUrl;
     }
 
+
+    list() {
+        return new Promise((resolve: Function, reject: Function) => {
+            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    let collection = db.collection('nodes');
+
+                    collection.aggregate([
+                        { $match: {} }
+                        , {
+                            $group:
+                            {
+                                _id: {
+                                    "userAgent": "$clusterName"
+                                },
+                                list: {
+                                    $push: '$clusterName'
+                                }
+                            }
+                        }
+                    ]).toArray((err: Error, result: Node[]) => {
+                        resolve(result);
+                        db.close();
+                    });
+                }
+            });
+        });
+    }
+
+
     details(clusterName: string) {
-        return this.list(clusterName).then((nodes: Node[]) => {
+        return this.listNodes(clusterName).then((nodes: Node[]) => {
 
             let promisesList = nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
 
@@ -40,7 +72,7 @@ export class ClusterService {
     }
 
 
-    private list(clusterName: string) {
+    private listNodes(clusterName: string) {
         return new Promise((resolve: Function, reject: Function) => {
             this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
                 if (err) {

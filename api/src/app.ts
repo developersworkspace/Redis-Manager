@@ -20,7 +20,7 @@ export class WebApi {
     }
 
     private init() {
-        let mongoClient = new mongodb.MongoClient();
+       
         
     }
 

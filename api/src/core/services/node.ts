@@ -48,6 +48,39 @@ export class NodeService {
     }
 
 
+    delete(clusterName: string, ipAddress: string, port: number) {
+        return new Promise((resolve: Function, reject: Function) => {
+            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    let collection = db.collection('nodes');
+
+                    collection.findOne({
+                        clusterName: clusterName,
+                        ipAddress: ipAddress,
+                        port: port
+                    }, (err: Error, nodeResult: any) => {
+                        if (nodeResult != null) {
+                            collection.remove({
+                                clusterName: clusterName,
+                                ipAddress: ipAddress,
+                                port: port
+                            }, (err: Error, insertResult: mongodb.InsertOneWriteOpResult) => {
+                                db.close();
+                                resolve(true);
+                            });
+                        } else {
+                            db.close();
+                            resolve(false);
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+
     list(clusterName: string) {
         return new Promise((resolve: Function, reject: Function) => {
             this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
