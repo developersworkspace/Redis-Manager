@@ -40,7 +40,7 @@
           <br />
           <label>Evicted Keys: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.evicted_keys}}</span>
           <br />
-          <label>Memory Used: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.used_memory}}</span>
+          <label>Memory Used: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.used_memory}} MB</span>
           <br />
           <h3>Nodes</h3>
           <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="nodes == null" />
