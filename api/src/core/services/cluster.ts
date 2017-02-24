@@ -49,9 +49,9 @@ export class ClusterService {
             return Promise.all(promisesList).then((values: any[]) => {
                 values = values.filter(x => x.role == 'master');
                 return {
-                    used_memory: values.length == 0 ? 0 : values.map(x => x.used_memory).reduce((a, b) => {
+                    used_memory: values.length == 0 ? 0 : Math.round(values.map(x => x.used_memory).reduce((a, b) => {
                         return a + b;
-                    }),
+                    }) / 1000000),
                     expired_keys: values.length == 0 ? 0 : values.map(x => x.expired_keys).reduce((a, b) => {
                         return a + b;
                     }),
