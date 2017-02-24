@@ -56,3 +56,21 @@ cd ./../
 
 # Build and run docker compose as deamon
 docker-compose up -d
+
+
+# -- INSTALL NGINX --
+
+# Update machine package indexes
+apt-get update
+
+# Install NGINX
+apt-get install -y nginx
+
+# Add rule to firewall
+ufw allow 'Nginx HTTP'
+
+# Download nginx.conf to NGINX directory
+curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/nginx.conf
+
+# Restart NGINX
+systemctl restart nginx

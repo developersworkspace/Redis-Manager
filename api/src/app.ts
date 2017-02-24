@@ -47,7 +47,7 @@ export class WebApi {
 }
 
 
-let port = 3000;
+let port = 8080;
 let api = new WebApi(express(), port);
 api.run();
 console.info(`Listening on ${port}`);
