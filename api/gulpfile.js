@@ -33,6 +33,6 @@ gulp.task('build1', ['clean'], function () {
 gulp.task('build', ['build1'], function () {
     return gulp
         .src(["./src/**/*.ts"], { base: './src' })
-        .pipe(ts({ module: 'commonjs', noImplicitAny: false, declaration: true, allowUnreachableCode: true }))
+        .pipe(ts({ module: 'commonjs', target: 'es6', noImplicitAny: false, declaration: true, allowUnreachableCode: true }))
         .pipe(gulp.dest('./dist'));
 });

@@ -5,6 +5,11 @@ apt-add-repository 'deb https://apt.dockerproject.org/repo ubuntu-xenial main'
 apt-get update & apt-cache policy docker-engine
 apt-get install -y docker-engine
 
+# -- INSTALL DOCKER-COMPOSE --
+
+curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)"
+chmod +x /usr/local/bin/docker-compose
+
 # -- BUILD AND INSTALL REDIS MANAGER --
 
 # Update machine package indexes
