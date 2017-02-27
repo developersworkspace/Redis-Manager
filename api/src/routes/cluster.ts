@@ -34,4 +34,16 @@ router.get('/list', (req: Request, res: Response, next: Function) => {
 });
 
 
+router.post('/clear', (req: Request, res: Response, next: Function) => {
+    let clusterService = new ClusterService(redis, mongodb.MongoClient, config);
+
+    clusterService.clear(req.body.clusterName, req.body.pattern).then((result: any) => {
+        res.json(result);
+    }).catch((err: Error) => {
+        res.status(500).send(err.message);
+    });
+});
+
+
+
 export = router;

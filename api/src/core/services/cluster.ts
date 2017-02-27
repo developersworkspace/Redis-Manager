@@ -66,6 +66,72 @@ export class ClusterService {
         });
     }
 
+    clear(clusterName: string, pattern: string) {
+        return this.listNodes(clusterName).then((nodes: Node[]) => {
+            let tasks = nodes.map(x => this.clearNodeKeys(x.ipAddress, x.port, pattern));
+            return Promise.all(tasks);
+        });
+    }
+
+
+
+    private clearNodeKeys(ipAddress: string, port: number, pattern: string) {
+        return this.listNodeKeys(ipAddress, port, pattern).then((keys: string[]) => {
+            let tasks = [];
+
+            for (let i = 0; i < keys.length; i++) {
+                let p = new Promise((resolve: Function, reject: Function) => {
+
+                    let redisClient: redis.RedisClient = this.redisProvider.createClient({
+                        host: ipAddress,
+                        port: port
+                    });
+
+                    redisClient.on('error', (err: Error) => {
+                        resolve(false);
+                        redisClient.quit();
+                    });
+
+                    redisClient.del(keys[i], () => {
+                        resolve(true);
+                        redisClient.quit();
+                    });
+                });
+
+                tasks.push(p);
+            }
+
+            return Promise.all(tasks).then((results: any[]) => {
+                return true;
+            });
+        });
+    }
+
+    private listNodeKeys(ipAddress: string, port: number, pattern: string) {
+        return new Promise((resolve: Function, reject: Function) => {
+            let redisClient: redis.RedisClient = this.redisProvider.createClient({
+                host: ipAddress,
+                port: port
+            });
+
+            redisClient.on('error', (err: Error) => {
+                resolve(null);
+                redisClient.quit();
+            });
+
+            redisClient.keys(pattern, (err: Error, keys: string[]) => {
+
+                if (err) {
+                    resolve(null);
+                } else {
+                    resolve(keys);
+                }
+
+                redisClient.quit();
+            });
+        });
+    }
+
 
     private listNodes(clusterName: string) {
         return new Promise((resolve: Function, reject: Function) => {
@@ -95,7 +161,7 @@ export class ClusterService {
                 port: port
             });
 
-            redisClient.on('error', function (err) {
+            redisClient.on('error', (err: Error) => {
                 resolve({
                     used_memory: 0,
                     expired_keys: 0,
@@ -103,6 +169,8 @@ export class ClusterService {
                     connected_clients: 0,
                     role: null
                 });
+
+                redisClient.quit();
             });
 
             redisClient.info((err: Error, result: any) => {
@@ -120,6 +188,8 @@ export class ClusterService {
                     connected_clients: parseFloat(arr.filter(z => z.key == 'connected_clients')[0].value),
                     role: arr.filter(z => z.key == 'role')[0].value
                 });
+
+                redisClient.quit();
             });
         });
     }

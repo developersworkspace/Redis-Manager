@@ -23,6 +23,8 @@ export class AppComponent implements OnInit {
   newNodeIpAddress: string;
   newNodePort: number;
 
+  clearClusterPattern: string;
+
   constructor(private http: Http) {
 
   }
@@ -51,7 +53,20 @@ export class AppComponent implements OnInit {
         this.refreshClusters();
         this.onClick_SelectClusterName(this.selectedClusterName);
       }, (err: any) => {
+        console.log(err);
+      });
+  }
 
+  onClick_ClearCluster() {
+    this.http.post(environment.apiUrl + '/cluster/clear', {
+      clusterName: this.selectedClusterName,
+      pattern: this.clearClusterPattern
+    })
+      .map((res: Response) => res.json())
+      .subscribe((result: any) => {
+        this.clearClusterPattern = null;
+      }, (err: any) => {
+        console.log(err);
       });
   }
 
@@ -69,7 +84,7 @@ export class AppComponent implements OnInit {
         this.nodes = result;
         this.updateNodeStatuses();
       }, (err: any) => {
-
+        console.log(err);
       });
   }
 
@@ -85,7 +100,7 @@ export class AppComponent implements OnInit {
       .subscribe((result: any) => {
         this.clusterDetails = result;
       }, (err: any) => {
-
+        console.log(err);
       });
   }
 
@@ -95,7 +110,7 @@ export class AppComponent implements OnInit {
       .subscribe((result: any) => {
         this.clusters = result;
       }, (err: any) => {
-
+        console.log(err);
       });
   }
 
@@ -113,7 +128,7 @@ export class AppComponent implements OnInit {
         .subscribe((result: any) => {
           node.isActive = result;
         }, (err: any) => {
-
+          console.log(err);
         });
     }
   }

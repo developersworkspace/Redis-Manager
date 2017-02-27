@@ -18,3 +18,8 @@ services:
     mongo:
         # Uses mongo image from Docker hub
         image: "mongo"
+    mongo-seed:
+        # Uses Dockerfile in 'mongo-seed'
+        build: mongo-seed
+        links:
+            - mongo

@@ -108,8 +108,9 @@ export class NodeService {
                 port: port
             });
 
-            redisClient.on('error', function (err) {
+            redisClient.on('error', (err: Error) => {
                 resolve(false);
+                redisClient.quit();
             });
 
             redisClient.ping((err: Error, result: any) => {
@@ -120,6 +121,8 @@ export class NodeService {
                 } else {
                     resolve(false);
                 }
+
+                redisClient.quit();
             });
         });
     }

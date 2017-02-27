@@ -1,0 +1,125 @@
+[
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7001
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7002
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7003
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7004
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7005
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7006
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7007
+  },
+  {
+    "clusterName": "Staging Cluster",
+    "ipAddress": "172.24.40.8",
+    "port": 7008
+  },
+
+
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7001
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7002
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7003
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7004
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7005
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7006
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7007
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.13",
+    "port": 7007
+  },
+
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7001
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7002
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7003
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7004
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7005
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7006
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7007
+  },
+  {
+    "clusterName": "Live Cluster",
+    "ipAddress": "172.24.40.5",
+    "port": 7008
+  }
+]
