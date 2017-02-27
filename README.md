@@ -1,5 +1,12 @@
 # Redis-Manager
 
+![Screenshot](https://github.com/developersworkspace/Redis-Manager/blob/master/screenshots/one.png?raw=true)
+
+
+## Installation
+
+### One-line Install
+
 `bash <(curl -s https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/install.sh)`
 
 The MIT License (MIT)
