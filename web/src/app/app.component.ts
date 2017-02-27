@@ -58,6 +58,11 @@ export class AppComponent implements OnInit {
   }
 
   onClick_ClearCluster() {
+
+    if (this.selectedClusterName == null) {
+      return;
+    }
+
     this.http.post(environment.apiUrl + '/cluster/clear', {
       clusterName: this.selectedClusterName,
       pattern: this.clearClusterPattern
@@ -65,6 +70,7 @@ export class AppComponent implements OnInit {
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.clearClusterPattern = null;
+        this.refreshClusterDetails();
       }, (err: any) => {
         console.log(err);
       });
