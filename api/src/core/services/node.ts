@@ -16,32 +16,26 @@ export class NodeService {
     }
 
     create(clusterName: string, ipAddress: string, port: number) {
-        return new Promise((resolve: Function, reject: Function) => {
-            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    let collection = db.collection('nodes');
+        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
+            let collection = db.collection('nodes');
 
-                    collection.findOne({
+            collection.findOne({
+                clusterName: clusterName,
+                ipAddress: ipAddress,
+                port: port
+            }).then((nodeResult: any) => {
+                if (nodeResult == null) {
+                    collection.insertOne({
                         clusterName: clusterName,
                         ipAddress: ipAddress,
                         port: port
-                    }, (err: Error, nodeResult: any) => {
-                        if (nodeResult == null) {
-                            collection.insertOne({
-                                clusterName: clusterName,
-                                ipAddress: ipAddress,
-                                port: port
-                            }, (err: Error, insertResult: mongodb.InsertOneWriteOpResult) => {
-                                db.close();
-                                resolve(true);
-                            });
-                        } else {
-                            db.close();
-                            resolve(false);
-                        }
+                    }, (err: Error, insertResult: mongodb.InsertOneWriteOpResult) => {
+                        db.close();
+                        return true;
                     });
+                } else {
+                    db.close();
+                    return false;
                 }
             });
         });
@@ -49,32 +43,26 @@ export class NodeService {
 
 
     delete(clusterName: string, ipAddress: string, port: number) {
-        return new Promise((resolve: Function, reject: Function) => {
-            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    let collection = db.collection('nodes');
+        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
+            let collection = db.collection('nodes');
 
-                    collection.findOne({
+            collection.findOne({
+                clusterName: clusterName,
+                ipAddress: ipAddress,
+                port: port
+            }, (err: Error, nodeResult: any) => {
+                if (nodeResult != null) {
+                    collection.remove({
                         clusterName: clusterName,
                         ipAddress: ipAddress,
                         port: port
-                    }, (err: Error, nodeResult: any) => {
-                        if (nodeResult != null) {
-                            collection.remove({
-                                clusterName: clusterName,
-                                ipAddress: ipAddress,
-                                port: port
-                            }, (err: Error, insertResult: mongodb.InsertOneWriteOpResult) => {
-                                db.close();
-                                resolve(true);
-                            });
-                        } else {
-                            db.close();
-                            resolve(false);
-                        }
+                    }).then((insertResult: mongodb.InsertOneWriteOpResult) => {
+                        db.close();
+                        return true;
                     });
+                } else {
+                    db.close();
+                    return false;
                 }
             });
         });
@@ -82,21 +70,14 @@ export class NodeService {
 
 
     list(clusterName: string) {
-        return new Promise((resolve: Function, reject: Function) => {
-            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    let collection = db.collection('nodes');
+        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
+            let collection = db.collection('nodes');
 
-                    collection.find({
-                        clusterName: clusterName
-                    }).toArray((err: Error, result: Node[]) => {
-                        result = result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
-                        resolve(result);
-                        db.close();
-                    });
-                }
+            collection.find({
+                clusterName: clusterName
+            }).toArray().then((result: Node[]) => {
+                db.close();
+                return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
             });
         });
     }

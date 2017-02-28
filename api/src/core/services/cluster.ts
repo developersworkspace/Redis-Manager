@@ -17,26 +17,20 @@ export class ClusterService {
 
 
     list() {
-        return new Promise((resolve: Function, reject: Function) => {
-            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    let collection = db.collection('nodes');
+        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
+            let collection = db.collection('nodes');
 
-                    collection.aggregate([
-                        { $match: {} }
-                        , {
-                            $group:
-                            {
-                                _id: '$clusterName'
-                            }
-                        }
-                    ]).toArray((err: Error, results: any[]) => {
-                        resolve(results.filter(x => x._id != null).map(x => x._id));
-                        db.close();
-                    });
+            collection.aggregate([
+                { $match: {} }
+                , {
+                    $group:
+                    {
+                        _id: '$clusterName'
+                    }
                 }
+            ]).toArray().then((results: any[]) => {
+                db.close();
+                return results.filter(x => x._id != null).map(x => x._id);
             });
         });
     }
@@ -134,21 +128,14 @@ export class ClusterService {
 
 
     private listNodes(clusterName: string) {
-        return new Promise((resolve: Function, reject: Function) => {
-            this.mongoClient.connect(this.mongoUrl, (err: Error, db: mongodb.Db) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    let collection = db.collection('nodes');
+        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
+            let collection = db.collection('nodes');
 
-                    collection.find({
-                        clusterName: clusterName
-                    }).toArray((err: Error, result: Node[]) => {
-                        result = result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
-                        resolve(result);
-                        db.close();
-                    });
-                }
+            collection.find({
+                clusterName: clusterName
+            }).toArray().then((result: Node[]) => {
+                db.close();
+                return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
             });
         });
     }
