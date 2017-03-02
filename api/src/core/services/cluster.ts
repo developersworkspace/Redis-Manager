@@ -16,11 +16,11 @@ export class ClusterService {
     }
 
 
-    list() {
+    list(): Promise<string[]> {
         return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
             let collection = db.collection('nodes');
 
-            collection.aggregate([
+            return collection.aggregate([
                 { $match: {} }
                 , {
                     $group:
@@ -28,39 +28,38 @@ export class ClusterService {
                         _id: '$clusterName'
                     }
                 }
-            ]).toArray().then((results: any[]) => {
-                db.close();
-                return results.filter(x => x._id != null).map(x => x._id);
-            });
+            ]).toArray();
+        }).then((results: any[]) => {
+            return results.filter(x => x._id != null).map(x => x._id);
         });
     }
 
 
-    details(clusterName: string) {
+    details(clusterName: string): Promise<any> {
         return this.listNodes(clusterName).then((nodes: Node[]) => {
             let promisesList = nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
 
-            return Promise.all(promisesList).then((values: any[]) => {
-                values = values.filter(x => x.role == 'master');
-                return {
-                    used_memory: values.length == 0 ? 0 : Math.round(values.map(x => x.used_memory).reduce((a, b) => {
-                        return a + b;
-                    }) / 1000000),
-                    expired_keys: values.length == 0 ? 0 : values.map(x => x.expired_keys).reduce((a, b) => {
-                        return a + b;
-                    }),
-                    evicted_keys: values.length == 0 ? 0 : values.map(x => x.evicted_keys).reduce((a, b) => {
-                        return a + b;
-                    }),
-                    connected_clients: values.length == 0 ? 0 : values.map(x => x.connected_clients).reduce((a, b) => {
-                        return a + b;
-                    })
-                };
-            });
+            return Promise.all(promisesList);
+        }).then((values: any[]) => {
+            values = values.filter(x => x.role == 'master');
+            return {
+                used_memory: values.length == 0 ? 0 : Math.round(values.map(x => x.used_memory).reduce((a, b) => {
+                    return a + b;
+                }) / 1000000),
+                expired_keys: values.length == 0 ? 0 : values.map(x => x.expired_keys).reduce((a, b) => {
+                    return a + b;
+                }),
+                evicted_keys: values.length == 0 ? 0 : values.map(x => x.evicted_keys).reduce((a, b) => {
+                    return a + b;
+                }),
+                connected_clients: values.length == 0 ? 0 : values.map(x => x.connected_clients).reduce((a, b) => {
+                    return a + b;
+                })
+            };
         });
     }
 
-    clear(clusterName: string, pattern: string) {
+    clear(clusterName: string, pattern: string): Promise<Boolean[]> {
         return this.listNodes(clusterName).then((nodes: Node[]) => {
             let tasks = nodes.map(x => this.clearNodeKeys(x.ipAddress, x.port, pattern));
             return Promise.all(tasks);
@@ -69,7 +68,7 @@ export class ClusterService {
 
 
 
-    private clearNodeKeys(ipAddress: string, port: number, pattern: string) {
+    private clearNodeKeys(ipAddress: string, port: number, pattern: string): Promise<Boolean> {
         return this.listNodeKeys(ipAddress, port, pattern).then((keys: string[]) => {
             let tasks = [];
 
@@ -95,13 +94,13 @@ export class ClusterService {
                 tasks.push(p);
             }
 
-            return Promise.all(tasks).then((results: any[]) => {
-                return true;
-            });
+            return Promise.all(tasks);
+        }).then((results: any[]) => {
+            return true;
         });
     }
 
-    private listNodeKeys(ipAddress: string, port: number, pattern: string) {
+    private listNodeKeys(ipAddress: string, port: number, pattern: string): Promise<string[]> {
         return new Promise((resolve: Function, reject: Function) => {
             let redisClient: redis.RedisClient = this.redisProvider.createClient({
                 host: ipAddress,
@@ -127,21 +126,20 @@ export class ClusterService {
     }
 
 
-    private listNodes(clusterName: string) {
+    private listNodes(clusterName: string): Promise<Node[]> {
         return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
             let collection = db.collection('nodes');
 
-            collection.find({
+            return collection.find({
                 clusterName: clusterName
-            }).toArray().then((result: Node[]) => {
-                db.close();
-                return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
-            });
+            }).toArray();
+        }).then((result: Node[]) => {
+            return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
         });
     }
 
 
-    private getNodeDetails(ipAddress: string, port: number) {
+    private getNodeDetails(ipAddress: string, port: number): Promise<any> {
         return new Promise((resolve: Function, reject: Function) => {
             let redisClient: redis.RedisClient = this.redisProvider.createClient({
                 host: ipAddress,
