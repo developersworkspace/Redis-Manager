@@ -8,7 +8,7 @@ import * as mongodb from 'mongodb';
 import { config } from './../config';
 
 // Imports core services 
-import { NodeService } from './../core/services/node';
+import { NodeService } from './../services/node';
 
 let router = express.Router();
 

@@ -10,10 +10,10 @@ import * as redis from 'redis-mock';
 import * as redisIntegration from 'redis';
 
 // Imports services
-import { NodeService } from './../../../../api/src/core/services/node';
+import { NodeService } from './../../../../api/src/services/node';
 
 // Imports models
-import { Node } from './../../../../api/src/core/models/node';
+import { Node } from './../../../../api/src/models/node';
 
 describe('NodeService', () => {
 
@@ -28,7 +28,7 @@ describe('NodeService', () => {
     let nonExistingPort = 7001;
 
     beforeEach((done: Function) => {
-
+        
         let config = {
             mongoUrl: 'mongodb://localhost:27017/myproject'
         };

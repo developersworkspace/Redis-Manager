@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": " gulp ts & node ./src/app.js",
-    "build": " gulp build"
+    "start": " gulp build:dev & node ./src/app.js",
+    "build": " gulp build:prod"
   },
   "author": "Barend Erasmus",
   "license": "MIT",
@@ -17,9 +17,11 @@
     "express": "^4.14.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
+    "gulp-rename": "^1.2.2",
     "gulp-typescript": "^3.1.4",
     "mongodb": "^2.2.24",
     "redis": "^2.6.5",
+    "run-sequence": "^1.2.2",
     "ts-node": "^2.1.0",
     "typescript": "^2.1.5"
   }
