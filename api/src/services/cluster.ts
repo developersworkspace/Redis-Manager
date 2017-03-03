@@ -28,7 +28,10 @@ export class ClusterService {
                         _id: '$clusterName'
                     }
                 }
-            ]).toArray();
+            ]).toArray().then((result: any[]) => {
+                db.close();
+                return result;
+            });
         }).then((results: any[]) => {
             return results.filter(x => x._id != null).map(x => x._id);
         });
@@ -132,7 +135,11 @@ export class ClusterService {
 
             return collection.find({
                 clusterName: clusterName
-            }).toArray();
+            }).toArray()
+                .then((result: Node[]) => {
+                    db.close();
+                    return result;
+                });
         }).then((result: Node[]) => {
             return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
         });
