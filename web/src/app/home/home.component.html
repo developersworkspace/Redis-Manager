@@ -33,6 +33,7 @@
         </div>
         <div class="col-lg-12" *ngIf="selectedClusterName != null">
           <h1>{{selectedClusterName}}</h1>
+          <h4><a href="/keys/{{selectedClusterName}}">Keys</a></h4>
           <div class="col-lg-6">
             <h3>Details</h3>
             <label>Connected Clients: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.connected_clients}}</span>

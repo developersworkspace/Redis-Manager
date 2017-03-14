@@ -69,6 +69,22 @@ export class ClusterService {
         });
     }
 
+    listClusterKeys(clusterName: string): Promise<string[]> {
+        return this.listNodes(clusterName).then((nodes: Node[]) => {
+            let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
+            return Promise.all(tasks);
+        }).then((values: Array<string[]>) => {
+            let arr: string[] = [];
+
+            for (let i = 0; i < values.length; i++) {
+                arr = arr.concat(values[i]);
+            }
+
+            return arr.filter((elem: string, pos: number) => {
+                return arr.indexOf(elem) == pos;
+            });
+        });
+    }
 
 
     private clearNodeKeys(ipAddress: string, port: number, pattern: string): Promise<Boolean> {
@@ -166,6 +182,12 @@ export class ClusterService {
             });
 
             redisClient.info((err: Error, result: any) => {
+
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
                 let arr = result.split(/\r?\n/).map(x => {
                     return {
                         key: x.split(':')[0],
