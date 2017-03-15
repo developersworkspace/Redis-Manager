@@ -37,7 +37,7 @@ router.get('/list', (req: Request, res: Response, next: Function) => {
 router.get('/listKeys', (req: Request, res: Response, next: Function) => {
     let clusterService = new ClusterService(redis, mongodb.MongoClient, config);
 
-    clusterService.listKeys(req.query.clusterName).then((result: any[]) => {
+    clusterService.listKeys(req.query.clusterName, req.query.pattern).then((result: any[]) => {
         res.json(result);
     }).catch((err: Error) => {
         res.status(500).send(err.message);

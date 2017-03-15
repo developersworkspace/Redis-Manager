@@ -72,29 +72,21 @@ export class ClusterService {
         });
     }
 
-    listKeys(clusterName: string): Promise<string[]> {
+    listKeys(clusterName: string, pattern: string): Promise<string[]> {
         return this.listNodes(clusterName).then((nodes: Node[]) => {
-            let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
+            let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, pattern));
             return Promise.all(tasks);
         }).then((values: Array<string[]>) => {
-
-            logger.debug(`ClusterService.listKeys Line 78 => values.length: ${values.length}`);
 
             let arr: string[] = [];
 
             for (let i = 0; i < values.length; i++) {
-                logger.debug(`i: ${i}`);
                 arr = arr.concat(values[i]);
             }
-            logger.debug(`Result: ${arr.length}`);
 
             arr = arr.sort();
 
-            logger.debug(`Result: ${arr.length}`);
-
-            return arr;
-        }).catch((err: Error) => {
-            logger.error(err.message);
+            return arr.slice(0, 50);
         });
     }
 
@@ -144,7 +136,6 @@ export class ClusterService {
             });
 
             redisClient.keys(pattern, (err: Error, keys: string[]) => {
-                logger.debug(`ClusterService.listNodeKeys Line 140 => keys.length: ${keys.length}`);
 
                 if (err) {
                     resolve(null);

@@ -14,19 +14,23 @@ import 'rxjs/add/operator/catch';
 })
 export class KeysComponent implements OnInit {
 
-  clusterName: string;
+  clusterName: string = null;
   clusterDetails: any = null;
-  keys: string[];
+  pattern: string = null;
+  keys: string[] = null;
 
   constructor(private http: Http, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.clusterName = params['clusterName'];
-      this.keys = ["asdasd", "asdasd", "asdasd"];
       this.refreshClusterDetails();
       this.resfreshKeys();
     });
+  }
+
+  onClick_Search() {
+    this.resfreshKeys();
   }
 
   refreshClusterDetails() {
@@ -45,7 +49,14 @@ export class KeysComponent implements OnInit {
   }
 
   resfreshKeys() {
-    this.http.get(environment.apiUrl + '/cluster/listKeys?clusterName=' + this.clusterName)
+
+    this.keys = null;
+    if (this.pattern == null) {
+      this.keys = [];
+      return;
+    }
+
+    this.http.get(`${environment.apiUrl}/cluster/listKeys?clusterName=${this.clusterName}&pattern=${this.pattern}`)
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.keys = result;
