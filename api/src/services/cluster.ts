@@ -69,7 +69,7 @@ export class ClusterService {
         });
     }
 
-    listClusterKeys(clusterName: string): Promise<string[]> {
+    listKeys(clusterName: string): Promise<string[]> {
         return this.listNodes(clusterName).then((nodes: Node[]) => {
             let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
             return Promise.all(tasks);
@@ -82,7 +82,7 @@ export class ClusterService {
 
             return arr.filter((elem: string, pos: number) => {
                 return arr.indexOf(elem) == pos;
-            });
+            }).sort();
         });
     }
 

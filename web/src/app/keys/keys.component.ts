@@ -25,6 +25,7 @@ export class KeysComponent implements OnInit {
       this.clusterName = params['clusterName'];
       this.keys = ["asdasd", "asdasd", "asdasd"];
       this.refreshClusterDetails();
+      this.resfreshKeys();
     });
   }
 
@@ -38,6 +39,16 @@ export class KeysComponent implements OnInit {
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.clusterDetails = result;
+      }, (err: any) => {
+        console.log(err);
+      });
+  }
+
+  resfreshKeys() {
+    this.http.get(environment.apiUrl + '/cluster/listKeys?clusterName=' + this.clusterName)
+      .map((res: Response) => res.json())
+      .subscribe((result: any) => {
+        this.keys = result;
       }, (err: any) => {
         console.log(err);
       });
