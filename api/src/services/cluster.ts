@@ -85,10 +85,15 @@ export class ClusterService {
             for (let i = 0; i < values.length; i++) {
                 arr = arr.concat(values[i]);
             }
+            logger.debug(`Result: ${arr.length}`);
 
-            return arr.filter((elem: string, pos: number) => {
+            arr = arr.filter((elem: string, pos: number) => {
                 return arr.indexOf(elem) == pos;
             }).sort();
+
+            logger.debug(`Result: ${arr.length}`);
+            
+            return arr;
         });
     }
 
