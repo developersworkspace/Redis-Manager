@@ -74,6 +74,8 @@ export class ClusterService {
             let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
             return Promise.all(tasks);
         }).then((values: Array<string[]>) => {
+
+            console.log(values);
             let arr: string[] = [];
 
             for (let i = 0; i < values.length; i++) {
