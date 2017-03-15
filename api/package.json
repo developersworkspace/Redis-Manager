@@ -12,9 +12,11 @@
   "dependencies": {
     "@types/mongodb": "^2.1.40",
     "@types/redis": "^0.12.36",
+    "@types/winston": "^2.2.0",
     "body-parser": "^1.16.1",
     "cors": "^2.8.1",
     "express": "^4.14.1",
+    "express-winston": "^2.3.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-rename": "^1.2.2",
@@ -23,6 +25,7 @@
     "redis": "^2.6.5",
     "run-sequence": "^1.2.2",
     "ts-node": "^2.1.0",
-    "typescript": "^2.1.5"
+    "typescript": "^2.1.5",
+    "winston": "^2.3.1"
   }
 }

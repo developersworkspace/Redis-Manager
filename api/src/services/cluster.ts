@@ -7,6 +7,9 @@ import {
     Node
 } from './../models/node';
 
+// Imports logger
+import { logger } from './../logger';
+
 export class ClusterService {
 
     private mongoUrl: string;
@@ -75,7 +78,8 @@ export class ClusterService {
             return Promise.all(tasks);
         }).then((values: Array<string[]>) => {
 
-            console.log(values);
+            logger.debug(`ClusterService.listKeys Line 78 => values.length: ${values.length}`);
+
             let arr: string[] = [];
 
             for (let i = 0; i < values.length; i++) {
@@ -134,6 +138,7 @@ export class ClusterService {
             });
 
             redisClient.keys(pattern, (err: Error, keys: string[]) => {
+                logger.debug(`ClusterService.listNodeKeys Line 140 => keys.length: ${keys.length}`);
 
                 if (err) {
                     resolve(null);

@@ -9,6 +9,8 @@ services:
         links: 
         # Links 'mongo' container to 'api'
         - mongo
+        volumes:
+        - /logs:/logs
     web:
         # Uses Dockerfile in 'web'
         build: web

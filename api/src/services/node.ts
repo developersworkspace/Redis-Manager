@@ -7,6 +7,10 @@ import {
     Node
 } from './../models/node';
 
+
+// Imports logger
+import { logger } from './../logger';
+
 export class NodeService {
 
     private mongoUrl: string;
@@ -27,7 +31,6 @@ export class NodeService {
 
 
     delete(clusterName: string, ipAddress: string, port: number): Promise<Boolean> {
-
         return this.doesNodeExist(clusterName, ipAddress, port).then((result: Boolean) => {
             if (result == true) {
                 return this.removeNode(clusterName, ipAddress, port);
@@ -41,7 +44,6 @@ export class NodeService {
     list(clusterName: string): Promise<Node[]> {
         return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
             let collection = db.collection('nodes');
-
             return collection.find({
                 clusterName: clusterName
             }).toArray();

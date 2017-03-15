@@ -3,6 +3,7 @@ import express = require("express");
 import bodyParser = require("body-parser");
 import * as mongodb from 'mongodb';
 import * as cors from 'cors';
+import expressWinston = require('express-winston');
 
 
 // Imports routes
@@ -11,6 +12,9 @@ import * as clusterRoute from './routes/cluster';
 
 // Imports middleware
 // NONE
+
+// Imports logger
+import { logger } from './logger';
 
 
 export class WebApi {
@@ -30,6 +34,11 @@ export class WebApi {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
         app.use(cors());
+        app.use(expressWinston.logger({
+            winstonInstance: logger,
+            meta: false,
+            msg: 'HTTP Request: {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}'
+        }));
     }
 
     private configureRoutes(app: express.Express) {
@@ -50,4 +59,4 @@ export class WebApi {
 let port = 3000;
 let api = new WebApi(express(), port);
 api.run();
-console.info(`Listening on ${port}`);
+logger.info(`Listening on ${port}`);
