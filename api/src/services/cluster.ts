@@ -88,9 +88,7 @@ export class ClusterService {
             }
             logger.debug(`Result: ${arr.length}`);
 
-            arr = arr.filter((elem: string, pos: number) => {
-                return arr.indexOf(elem) == pos;
-            }).sort();
+            arr = arr.sort();
 
             logger.debug(`Result: ${arr.length}`);
 
