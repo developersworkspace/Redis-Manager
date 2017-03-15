@@ -83,6 +83,7 @@ export class ClusterService {
             let arr: string[] = [];
 
             for (let i = 0; i < values.length; i++) {
+                logger.debug(`i: ${i}`);
                 arr = arr.concat(values[i]);
             }
             logger.debug(`Result: ${arr.length}`);
@@ -92,8 +93,10 @@ export class ClusterService {
             }).sort();
 
             logger.debug(`Result: ${arr.length}`);
-            
+
             return arr;
+        }).catch((err: Error) => {
+            logger.error(err.message);
         });
     }
 
