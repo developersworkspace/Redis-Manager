@@ -80,10 +80,16 @@ export class NodeService {
 
 
     key(clusterName: string, key: string): Promise<string> {
+        // return this.list(clusterName).then((result: Node[]) => {
+        //     return Promise.all(result.map(x => this.getKey(x.ipAddress, x.port, key)));
+        // }).then((values: string[]) => {
+        //     return values.filter(x => x != null && x != undefined)[0];
+        // });
+
         return this.list(clusterName).then((result: Node[]) => {
-            return Promise.all(result.map(x => this.getKey(x.ipAddress, x.port, key)));
-        }).then((values: string[]) => {
-            return values.filter(x => x != null && x != undefined)[0];
+            return this.getKey(result[0].ipAddress, result[0].port, key);
+        }).then((value: string) => {
+            return value;
         });
     }
 
@@ -95,7 +101,7 @@ export class NodeService {
             });
 
             redisClient.on('error', (err: Error) => {
-                resolve(false);
+                reject();
                 redisClient.quit();
             });
 
