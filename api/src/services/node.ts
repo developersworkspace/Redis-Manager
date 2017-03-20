@@ -79,6 +79,39 @@ export class NodeService {
     }
 
 
+    key(clusterName: string, key: string): Promise<string> {
+        return this.list(clusterName).then((result: Node[]) => {
+            return Promise.all(result.map(x => this.getKey(x.ipAddress, x.port, key)));
+        }).then((values: string[]) => {
+            return values.filter(x => x != null && x != undefined)[0];
+        });
+    }
+
+    getKey(ipAddress: string, port: number, key: string): Promise<string> {
+        return new Promise((resolve: Function, reject: Function) => {
+            let redisClient: redis.RedisClient = this.redisProvider.createClient({
+                host: ipAddress,
+                port: port
+            });
+
+            redisClient.on('error', (err: Error) => {
+                resolve(false);
+                redisClient.quit();
+            });
+
+            redisClient.get(key, (err: Error, result: any) => {
+                if (err) {
+                    reject();
+                } else {
+                    resolve(result);
+                }
+
+                redisClient.quit();
+            });
+        });
+    }
+
+
     private removeNode(clusterName: string, ipAddress: string, port: number): Promise<Boolean> {
         return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
             let collection = db.collection('nodes');

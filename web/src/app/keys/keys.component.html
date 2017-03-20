@@ -36,7 +36,7 @@
              <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="keys == null" />
             <ul *ngIf="keys != null">
               <li *ngFor="let item of keys">
-                {{item}}
+                <a (click)="onClick_Key(item)">{{item}}</a>
               </li>
             </ul>
           </div>

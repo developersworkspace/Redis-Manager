@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 // Imports for HTTP
@@ -6,6 +6,9 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { environment } from './../../environments/environment';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+import { Overlay } from 'angular2-modal';
+import { Modal } from 'angular2-modal/plugins/bootstrap';
 
 @Component({
   selector: 'app-keys',
@@ -19,18 +22,20 @@ export class KeysComponent implements OnInit {
   pattern: string = null;
   keys: string[] = null;
 
-  constructor(private http: Http, private route: ActivatedRoute) { }
+  constructor(private http: Http, private route: ActivatedRoute, private overlay: Overlay, private vcRef: ViewContainerRef, public modal: Modal) {
+    overlay.defaultViewContainer = vcRef;
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.clusterName = params['clusterName'];
       this.refreshClusterDetails();
-      this.resfreshKeys();
+      this.refreshKeys();
     });
   }
 
   onClick_Search() {
-    this.resfreshKeys();
+    this.refreshKeys();
   }
 
   refreshClusterDetails() {
@@ -48,7 +53,7 @@ export class KeysComponent implements OnInit {
       });
   }
 
-  resfreshKeys() {
+  refreshKeys() {
 
     this.keys = null;
     if (this.pattern == null) {
@@ -63,6 +68,29 @@ export class KeysComponent implements OnInit {
       }, (err: any) => {
         console.log(err);
       });
+  }
+
+  onClick_Key(key: string) {
+
+    this.http.get(`${environment.apiUrl}/node/getkey?clusterName=${this.clusterName}&key=${key}`)
+      .map((res: Response) => res.text())
+      .subscribe((result: any) => {
+        this.modal.alert()
+          .size('lg')
+          .showClose(true)
+          .title(`JSON for '${key}'`)
+          .body(`
+                <code>
+                  ${result}
+                </code>
+            `)
+          .open();
+
+      }, (err: any) => {
+        console.log(err);
+      });
+
+
   }
 
 }

@@ -52,4 +52,15 @@ router.get('/status', (req: Request, res: Response, next: Function) => {
     });
 });
 
+
+router.get('/getkey', (req: Request, res: Response, next: Function) => {
+    let nodeService = new NodeService(redis, mongodb.MongoClient, config);
+
+    nodeService.key(req.query.clusterName, req.query.key).then((result: any) => {
+        res.json(result);
+    }).catch((err: Error) => {
+        res.status(500).send(err.message);
+    });
+});
+
 export = router;
