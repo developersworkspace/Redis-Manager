@@ -101,13 +101,13 @@ export class NodeService {
             });
 
             redisClient.on('error', (err: Error) => {
-                reject();
+                reject(err);
                 redisClient.quit();
             });
 
             redisClient.get(key, (err: Error, result: any) => {
                 if (err) {
-                    reject();
+                    reject(err);
                 } else {
                     resolve(result);
                 }
