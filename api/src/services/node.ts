@@ -101,13 +101,27 @@ export class NodeService {
             });
 
             redisClient.on('error', (err: Error) => {
-                reject(err);
+                if (err.message.startsWith('MOVED')) {
+                    let ipAddressAndPort = err.message.split(' ')[2];
+                    this.getKey(ipAddressAndPort.split(':')[0], parseInt(ipAddressAndPort.split(':')[1]), key).then((result: string) => {
+                        resolve(result);
+                    });
+                } else {
+                    reject(err);
+                }
                 redisClient.quit();
             });
 
             redisClient.get(key, (err: Error, result: any) => {
                 if (err) {
-                    reject(err);
+                    if (err.message.startsWith('MOVED')) {
+                        let ipAddressAndPort = err.message.split(' ')[2];
+                        this.getKey(ipAddressAndPort.split(':')[0], parseInt(ipAddressAndPort.split(':')[1]), key).then((result: string) => {
+                            resolve(result);
+                        });
+                    } else {
+                        reject(err);
+                    }
                 } else {
                     resolve(result);
                 }
