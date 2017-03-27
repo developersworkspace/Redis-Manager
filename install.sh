@@ -19,7 +19,7 @@ npm install -g gulp
 npm install -g @angular/cli
 
 # Clone 'Redis-Manager' repository
-git clone https://github.com/developersworkspace/Redis-Manager.git
+git clone -b EMI-Local-Cpt https://github.com/developersworkspace/Redis-Manager.git
 
 # Change directory to 'api'
 cd ./Redis-Manager/api
@@ -60,7 +60,7 @@ sudo apt-get install -y nginx
 sudo ufw allow 'Nginx HTTP'
 
 # Download nginx.conf to NGINX directory
-sudo curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/nginx.conf
+sudo curl -o /etc/nginx/nginx.conf https://raw.githubusercontent.com/developersworkspace/Redis-Manager/EMI-Local-Cpt/nginx.conf
 
 # Restart NGINX
 sudo systemctl restart nginx

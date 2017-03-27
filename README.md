@@ -7,7 +7,7 @@
 
 ### One-line Install
 
-`bash <(curl -s https://raw.githubusercontent.com/developersworkspace/Redis-Manager/master/install.sh)`
+`bash <(curl -s https://raw.githubusercontent.com/developersworkspace/Redis-Manager/EMI-Local-Cpt/install.sh)`
 
 The MIT License (MIT)
 =====================
