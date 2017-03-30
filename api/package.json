@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": " gulp build:dev & node ./src/app.js",
-    "build": " gulp build:prod"
+    "build": " gulp build:prod",
+    "test": "gulp build:dev & mocha --timeout=5000 ./src/**/*.test.js & gulp clean:js",
+    "cover": "gulp build:dev & istanbul cover node_modules/mocha/bin/_mocha --root ./src ./src/**/*.test.js & gulp clean:js"
   },
   "author": "Barend Erasmus",
   "license": "MIT",
@@ -17,15 +19,23 @@
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "express-winston": "^2.3.0",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
-    "gulp-rename": "^1.2.2",
-    "gulp-typescript": "^3.1.4",
     "mongodb": "^2.2.24",
     "redis": "^2.6.5",
     "run-sequence": "^1.2.2",
     "ts-node": "^2.1.0",
     "typescript": "^2.1.5",
     "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.38",
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-typescript": "^3.1.4",
+    "mocha": "^3.2.0",
+    "mongo-mock": "^2.1.1",
+    "redis-mock": "^0.16.0"
   }
 }
