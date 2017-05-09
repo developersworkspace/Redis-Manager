@@ -1,49 +1,71 @@
-// Imports 
+// Imports
+import * as co from 'co';
 import { Express, Request, Response } from "express";
 import * as express from 'express';
-import * as redis from 'redis';
-import * as mongodb from 'mongodb';
 
-// Imports config
+// Imports configuration
 import { config } from './../config';
 
-// Imports core services 
+// Imports services
 import { ClusterService } from './../services/cluster';
 
-let router = express.Router();
+// Imports models
+import { Cluster } from './../models/cluster';
+import { Node } from './../models/node';
+import { ClusterDetails } from './../models/cluster-details';
 
-router.get('/details', (req: Request, res: Response, next: Function) => {
-    let clusterService = new ClusterService(redis, mongodb.MongoClient, config);
+export class ClusterRouter {
 
-    clusterService.details(req.query.clusterName).then((result: any) => {
-        res.json(result);
-    }).catch((err: Error) => {
-        res.status(500).send(err.message);
-    });
-});
+    private router = express.Router();
 
+    constructor() {
+        this.router.get('/list', this.list);
+        this.router.get('/find', this.find);
+        this.router.get('/details', this.details);
+        this.router.post('/clear', this.clear);
+    }
 
-router.get('/list', (req: Request, res: Response, next: Function) => {
-    let clusterService = new ClusterService(redis, mongodb.MongoClient, config);
+    public GetRouter() {
+        return this.router;
+    }
 
-    clusterService.list().then((result: any[]) => {
-        res.json(result);
-    }).catch((err: Error) => {
-        res.status(500).send(err.message);
-    });
-});
+    private details(req: Request, res: Response, next: () => void) {
+        co(function* () {
+            const clusterService = new ClusterService(config.mongoUrl);
 
+            const clusterDetails: ClusterDetails = yield clusterService.details(req.query.name);
 
-router.post('/clear', (req: Request, res: Response, next: Function) => {
-    let clusterService = new ClusterService(redis, mongodb.MongoClient, config);
+            res.json(clusterDetails);
+        });
+    }
 
-    clusterService.clear(req.body.clusterName, req.body.pattern).then((result: any) => {
-        res.json(result);
-    }).catch((err: Error) => {
-        res.status(500).send(err.message);
-    });
-});
+    private find(req: Request, res: Response, next: () => void) {
+        co(function* () {
+            const clusterService = new ClusterService(config.mongoUrl);
 
+            const cluster: Cluster = yield clusterService.find(req.query.name);
 
+            res.json(cluster);
+        });
+    }
 
-export = router;
+    private list(req: Request, res: Response, next: () => void) {
+        co(function* () {
+            const clusterService = new ClusterService(config.mongoUrl);
+
+            const clusters: Cluster[] = yield clusterService.list();
+
+            res.json(clusters);
+        });
+    }
+
+    private clear(req: Request, res: Response, next: () => void) {
+        co(function* () {
+            const clusterService = new ClusterService(config.mongoUrl);
+
+            const result: boolean = yield clusterService.clear(req.body.name, req.body.pattern);
+
+            res.json(result);
+        });
+    }
+}

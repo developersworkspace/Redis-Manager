@@ -1,83 +1,113 @@
 // Imports
+import * as co from 'co';
 import * as redis from 'redis';
-import * as mongodb from 'mongodb';
+import * as mongo from 'mongodb';
 
 // Imports models
-import {
-    Node
-} from './../models/node';
+import { Cluster } from './../models/cluster';
+import { Node } from './../models/node';
+import { ClusterDetails } from './../models/cluster-details';
+import { NodeDetails } from './../models/node-details';
 
 export class ClusterService {
 
-    private mongoUrl: string;
+    constructor(private mongoUri: string) {
 
-    constructor(private redisProvider: any, private mongoClient: mongodb.MongoClient, config: any) {
-        this.mongoUrl = config.mongoUrl;
     }
 
+    public list(): Promise<Cluster[]> {
 
-    list(): Promise<string[]> {
-        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
-            let collection = db.collection('nodes');
+        const self = this;
 
-            return collection.aggregate([
-                { $match: {} }
-                , {
-                    $group:
-                    {
-                        _id: '$clusterName'
-                    }
-                }
-            ]).toArray().then((result: any[]) => {
-                db.close();
-                return result;
+        return co(function* () {
+            const db: mongo.Db = yield mongo.MongoClient.connect(self.mongoUri);
+
+            const collection: mongo.Collection = db.collection('clusters');
+
+            const clusters: any[] = yield collection.find({}).toArray();
+
+            db.close();
+
+            return clusters.map((x) => new Cluster(x.name, x.nodes.map((y) => new Node(y.ipAddress, y.port))));
+        });
+    }
+
+    public find(name: string): Promise<Cluster> {
+
+        const self = this;
+
+        return co(function* () {
+            const db: mongo.Db = yield mongo.MongoClient.connect(self.mongoUri);
+
+            const collection: mongo.Collection = db.collection('clusters');
+
+            const cluster: any = yield collection.findOne({
+                name: name
             });
-        }).then((results: any[]) => {
-            return results.filter(x => x._id != null).map(x => x._id);
+
+            db.close();
+
+            return new Cluster(cluster.name, cluster.nodes.map((y) => new Node(y.ipAddress, y.port)));
         });
     }
 
 
-    details(clusterName: string): Promise<any> {
-        return this.listNodes(clusterName).then((nodes: Node[]) => {
-            let promisesList = nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
+    public details(name: string): Promise<ClusterDetails> {
 
-            return Promise.all(promisesList);
-        }).then((values: any[]) => {
-            values = values.filter(x => x.role == 'master');
-            return {
-                used_memory: values.length == 0 ? 0 : Math.round(values.map(x => x.used_memory).reduce((a, b) => {
-                    return a + b;
-                }) / 1000000),
-                expired_keys: values.length == 0 ? 0 : values.map(x => x.expired_keys).reduce((a, b) => {
-                    return a + b;
-                }),
-                evicted_keys: values.length == 0 ? 0 : values.map(x => x.evicted_keys).reduce((a, b) => {
-                    return a + b;
-                }),
-                connected_clients: values.length == 0 ? 0 : values.map(x => x.connected_clients).reduce((a, b) => {
-                    return a + b;
-                })
-            };
+        const self = this;
+
+        return co(function* () {
+            const cluster: Cluster = yield this.find(name);
+
+            let nodeDetails: NodeDetails[] = yield cluster.nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
+
+            nodeDetails = nodeDetails.filter(x => x.role == 'master');
+
+            const usedMemory = nodeDetails.length == 0 ? 0 : Math.round(nodeDetails.map(x => x.usedMemory).reduce((a, b) => {
+                return a + b;
+            }) / 1000000);
+
+            const expiredKeys = nodeDetails.length == 0 ? 0 : nodeDetails.map(x => x.expiredKeys).reduce((a, b) => {
+                return a + b;
+            });
+
+            const evictedKeys = nodeDetails.length == 0 ? 0 : nodeDetails.map(x => x.evictedKeys).reduce((a, b) => {
+                return a + b;
+            });
+
+            const connectedClients = nodeDetails.length == 0 ? 0 : nodeDetails.map(x => x.connectedClients).reduce((a, b) => {
+                return a + b;
+            });
+
+            return new ClusterDetails(usedMemory, expiredKeys, evictedKeys, connectedClients);
+        });
+
+    }
+
+    public clear(name: string, pattern: string): Promise<boolean> {
+        
+        const self = this;
+
+        return co(function* () {
+            const cluster: Cluster = yield this.find(name);
+
+            yield cluster.nodes.map(x => this.clearNodeKeys(x.ipAddress, x.port, pattern));
+            return true;
         });
     }
 
-    clear(clusterName: string, pattern: string): Promise<Boolean[]> {
-        return this.listNodes(clusterName).then((nodes: Node[]) => {
-            let tasks = nodes.map(x => this.clearNodeKeys(x.ipAddress, x.port, pattern));
-            return Promise.all(tasks);
-        });
-    }
+    public listKeys(name: string): Promise<string[]> {
+        const self = this;
 
-    listClusterKeys(clusterName: string): Promise<string[]> {
-        return this.listNodes(clusterName).then((nodes: Node[]) => {
-            let tasks = nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
-            return Promise.all(tasks);
-        }).then((values: Array<string[]>) => {
+        return co(function* () {
+            const cluster: Cluster = yield this.find(name);
+
+            const keys:Array<string[]> = yield cluster.nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
+            
             let arr: string[] = [];
 
-            for (let i = 0; i < values.length; i++) {
-                arr = arr.concat(values[i]);
+            for (let i = 0; i < keys.length; i++) {
+                arr = arr.concat(keys[i]);
             }
 
             return arr.filter((elem: string, pos: number) => {
@@ -87,14 +117,14 @@ export class ClusterService {
     }
 
 
-    private clearNodeKeys(ipAddress: string, port: number, pattern: string): Promise<Boolean> {
+    private clearNodeKeys(ipAddress: string, port: number, pattern: string): Promise<boolean> {
         return this.listNodeKeys(ipAddress, port, pattern).then((keys: string[]) => {
             let tasks = [];
 
             for (let i = 0; i < keys.length; i++) {
                 let p = new Promise((resolve: Function, reject: Function) => {
 
-                    let redisClient: redis.RedisClient = this.redisProvider.createClient({
+                    let redisClient: redis.RedisClient = redis.createClient({
                         host: ipAddress,
                         port: port
                     });
@@ -121,7 +151,7 @@ export class ClusterService {
 
     private listNodeKeys(ipAddress: string, port: number, pattern: string): Promise<string[]> {
         return new Promise((resolve: Function, reject: Function) => {
-            let redisClient: redis.RedisClient = this.redisProvider.createClient({
+            let redisClient: redis.RedisClient = redis.createClient({
                 host: ipAddress,
                 port: port
             });
@@ -144,39 +174,15 @@ export class ClusterService {
         });
     }
 
-
-    private listNodes(clusterName: string): Promise<Node[]> {
-        return this.mongoClient.connect(this.mongoUrl).then((db: mongodb.Db) => {
-            let collection = db.collection('nodes');
-
-            return collection.find({
-                clusterName: clusterName
-            }).toArray()
-                .then((result: Node[]) => {
-                    db.close();
-                    return result;
-                });
-        }).then((result: Node[]) => {
-            return result.map(x => new Node(x.clusterName, x.ipAddress, x.port));
-        });
-    }
-
-
-    private getNodeDetails(ipAddress: string, port: number): Promise<any> {
+    private getNodeDetails(ipAddress: string, port: number): Promise<NodeDetails> {
         return new Promise((resolve: Function, reject: Function) => {
-            let redisClient: redis.RedisClient = this.redisProvider.createClient({
+            const redisClient: redis.RedisClient = redis.createClient({
                 host: ipAddress,
                 port: port
             });
 
             redisClient.on('error', (err: Error) => {
-                resolve({
-                    used_memory: 0,
-                    expired_keys: 0,
-                    evicted_keys: 0,
-                    connected_clients: 0,
-                    role: null
-                });
+                resolve(new NodeDetails(null, 0, 0, 0, 0));
 
                 redisClient.quit();
             });
@@ -188,20 +194,20 @@ export class ClusterService {
                     return;
                 }
 
-                let arr = result.split(/\r?\n/).map(x => {
+                const arr = result.split(/\r?\n/).map(x => {
                     return {
                         key: x.split(':')[0],
                         value: x.split(':')[1]
                     };
                 });
 
-                resolve({
-                    used_memory: parseFloat(arr.filter(z => z.key == 'used_memory')[0].value),
-                    expired_keys: parseFloat(arr.filter(z => z.key == 'expired_keys')[0].value),
-                    evicted_keys: parseFloat(arr.filter(z => z.key == 'evicted_keys')[0].value),
-                    connected_clients: parseFloat(arr.filter(z => z.key == 'connected_clients')[0].value),
-                    role: arr.filter(z => z.key == 'role')[0].value
-                });
+                resolve(new NodeDetails(
+                    arr.filter(z => z.key == 'role')[0].value,
+                    parseFloat(arr.filter(z => z.key == 'used_memory')[0].value),
+                    parseFloat(arr.filter(z => z.key == 'expired_keys')[0].value),
+                    parseFloat(arr.filter(z => z.key == 'evicted_keys')[0].value),
+                    parseFloat(arr.filter(z => z.key == 'connected_clients')[0].value),
+                ))
 
                 redisClient.quit();
             });

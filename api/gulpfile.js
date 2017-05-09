@@ -6,28 +6,18 @@ var rename = require("gulp-rename");
 var sequence = require('run-sequence');
 
 // Compiles typescript files
-gulp.task('compile:ts.dev', function () {
+gulp.task('compile:ts', function () {
     return gulp
         .src(["./src/**/*.ts"], { base: './src' })
-        .pipe(ts({ module: 'commonjs', target: 'es6', noImplicitAny: false, allowJs: true, allowUnreachableCode: true }))
-        .pipe(gulp.dest('./src'));
+        .pipe(ts({ module: 'commonjs', target: 'es6', noImplicitAny: false }))
+        .pipe(gulp.dest('./dist'));
 });
 
 // Removes compiled js files
-gulp.task('clean:js', function () {
+gulp.task('clean', function () {
     return gulp
         .src([
-            './src/**/*.js',
-        ], { read: false })
-        .pipe(clean())
-});
-
-
-// Removes compiled js files
-gulp.task('clean:dist', function () {
-    return gulp
-        .src([
-            './dist'
+            './dist/**/*.js'
         ], { read: false })
         .pipe(clean())
 });
@@ -40,15 +30,6 @@ gulp.task('copy:package.json', function () {
         .pipe(gulp.dest('./dist'));
 });
 
-
-// Compiles typescript files
-gulp.task('compile:ts.prod', function () {
-    return gulp
-        .src(["./src/**/*.ts"], { base: './src' })
-        .pipe(ts({ module: 'commonjs', target: 'es6', noImplicitAny: false, allowJs: true, allowUnreachableCode: true }))
-        .pipe(gulp.dest('./dist'));
-});
-
 // Renames config file
 gulp.task('rename:config', function () {
     return gulp.src('./dist/config.prod.js', { base: process.cwd() })
@@ -57,10 +38,10 @@ gulp.task('rename:config', function () {
 });
 
 
-gulp.task('build:dev', function (done) {
-    sequence('clean:js', 'compile:ts.dev', done);
+gulp.task('build', function (done) {
+    sequence('clean', 'compile:ts', 'copy:package.json', 'rename:config', done);
 });
 
-gulp.task('build:prod', function (done) {
-    sequence('clean:dist', 'compile:ts.prod', 'copy:package.json', 'rename:config', done);
+gulp.task('build:dev', function (done) {
+    sequence('clean', 'compile:ts', 'copy:package.json', done);
 });

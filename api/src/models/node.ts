@@ -1,6 +1,6 @@
 export class Node {
 
-     constructor(public clusterName: string, public ipAddress: string, public port: number) {
+     constructor(public ipAddress: string, public port: number) {
 
      }
 }
