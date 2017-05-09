@@ -1,11 +1,14 @@
 // Imports
 import { Component, OnInit } from '@angular/core';
-
-// Imports for HTTP
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { environment } from './../../environments/environment';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+
+// Imports models
+import { Node } from './../models/node';
+import { Cluster } from './../models/cluster';
+import { ClusterDetails } from './../models/cluster-details';
 
 @Component({
   selector: 'app-home',
@@ -14,15 +17,10 @@ import 'rxjs/add/operator/catch';
 })
 export class HomeComponent implements OnInit {
 
-  clusters: string[] = [];
+  clusters: Cluster[] = [];
 
-  selectedClusterName: string = null;
-  nodes: any[] = [];
-  clusterDetails: any = null;
-
-  newNodeClusterName: string;
-  newNodeIpAddress: string;
-  newNodePort: number;
+  selectedCluster: Cluster = null;
+  clusterDetails: ClusterDetails = null;
 
   clearClusterPattern: string;
 
@@ -34,107 +32,102 @@ export class HomeComponent implements OnInit {
     this.refreshClusters();
   }
 
-  onClick_SelectClusterName(clusterName) {
-    this.selectedClusterName = clusterName;
-    this.refreshNodes();
+  onClick_SelectClusterName(name) {
+    this.selectedCluster = new Cluster(name, null);
+    this.refreshCluster();
     this.refreshClusterDetails();
   }
 
-  onClick_CreateNewNode() {
-    this.http.post(environment.apiUrl + '/node/create', {
-      clusterName: this.newNodeClusterName,
-      ipAddress: this.newNodeIpAddress,
-      port: this.newNodePort
-    })
-      .map((res: Response) => res.json())
-      .subscribe((result: any) => {
-        this.newNodeClusterName = null;
-        this.newNodeIpAddress = null;
-        this.newNodePort = null;
-        this.refreshClusters();
-        this.onClick_SelectClusterName(this.selectedClusterName);
-      }, (err: any) => {
-        console.log(err);
-      });
-  }
 
   onClick_ClearCluster() {
 
-    if (this.selectedClusterName == null) {
+    if (this.selectedCluster == null) {
       return;
     }
 
     this.http.post(environment.apiUrl + '/cluster/clear', {
-      clusterName: this.selectedClusterName,
+      name: this.selectedCluster.name,
       pattern: this.clearClusterPattern
     })
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.clearClusterPattern = null;
         this.refreshClusterDetails();
-      }, (err: any) => {
-        console.log(err);
+      }, (err: Error) => {
+
       });
   }
 
-  refreshNodes() {
+  refreshCluster() {
 
-    if (this.selectedClusterName == null) {
+    if (this.selectedCluster == null) {
       return;
     }
 
-    this.nodes = null;
+    // this.http.get(environment.apiUrl + '/node/find?name=' + this.selectedCluster.name)
+    //   .map((res: Response) => res.json())
+    //   .subscribe((result: any) => {
+    //     this.selectedCluster = result;
+    //     this.updateNodeStatuses();
+    //   }, (err: Error) => {
+    //     
+    //   });
 
-    this.http.get(environment.apiUrl + '/node/list?clusterName=' + this.selectedClusterName)
-      .map((res: Response) => res.json())
-      .subscribe((result: any) => {
-        this.nodes = result;
-        this.updateNodeStatuses();
-      }, (err: any) => {
-        console.log(err);
-      });
+    this.selectedCluster = new Cluster('Test', [
+      new Node('localhost', 7001, false),
+      new Node('localhost', 7002, false)
+    ]);
+
+    this.updateNodeStatuses();
   }
 
   refreshClusterDetails() {
 
-    if (this.selectedClusterName == null) {
+    if (this.selectedCluster == null) {
       return;
     }
 
-    this.http.get(environment.apiUrl + '/cluster/details?clusterName=' + this.selectedClusterName)
+    this.http.get(environment.apiUrl + '/cluster/details?name=' + this.selectedCluster.name)
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.clusterDetails = result;
-      }, (err: any) => {
-        console.log(err);
+      }, (err: Error) => {
+
       });
   }
 
   refreshClusters() {
-    this.http.get(environment.apiUrl + '/cluster/list')
-      .map((res: Response) => res.json())
-      .subscribe((result: any) => {
-        this.clusters = result;
-      }, (err: any) => {
-        console.log(err);
-      });
+    // this.http.get(environment.apiUrl + '/cluster/list')
+    //   .map((res: Response) => res.json())
+    //   .subscribe((result: any) => {
+    //     this.clusters = result;
+    //   }, (err: Error) => {
+
+    //   });
+
+    this.clusters = [
+      new Cluster('Test', [
+        new Node('localhost', 7001, false),
+        new Node('localhost', 7002, false)
+      ])
+    ];
   }
 
   updateNodeStatuses() {
 
-    if (this.nodes == null) {
+    if (this.selectedCluster.nodes == null) {
       return;
     }
 
-    for (let i = 0; i < this.nodes.length; i++) {
-      let node = this.nodes[i];
+    for (let i = 0; i < this.selectedCluster.nodes.length; i++) {
+      let node = this.selectedCluster.nodes[i];
 
       this.http.get(environment.apiUrl + '/node/status?ipAddress=' + node.ipAddress + '&port=' + node.port)
         .map((res: Response) => res.json())
         .subscribe((result: any) => {
           node.isActive = result;
-        }, (err: any) => {
-          console.log(err);
+        }, (err: Error) => {
+          
         });
     }
   }

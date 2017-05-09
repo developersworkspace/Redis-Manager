@@ -57,9 +57,9 @@ export class ClusterService {
         const self = this;
 
         return co(function* () {
-            const cluster: Cluster = yield this.find(name);
+            const cluster: Cluster = yield self.find(name);
 
-            let nodeDetails: NodeDetails[] = yield cluster.nodes.map(x => this.getNodeDetails(x.ipAddress, x.port));
+            let nodeDetails: NodeDetails[] = yield cluster.nodes.map(x => self.getNodeDetails(x.ipAddress, x.port));
 
             nodeDetails = nodeDetails.filter(x => x.role == 'master');
 
@@ -89,7 +89,7 @@ export class ClusterService {
         const self = this;
 
         return co(function* () {
-            const cluster: Cluster = yield this.find(name);
+            const cluster: Cluster = yield self.find(name);
 
             yield cluster.nodes.map(x => this.clearNodeKeys(x.ipAddress, x.port, pattern));
             return true;
@@ -100,9 +100,9 @@ export class ClusterService {
         const self = this;
 
         return co(function* () {
-            const cluster: Cluster = yield this.find(name);
+            const cluster: Cluster = yield self.find(name);
 
-            const keys:Array<string[]> = yield cluster.nodes.map(x => this.listNodeKeys(x.ipAddress, x.port, '*'));
+            const keys:Array<string[]> = yield cluster.nodes.map(x => self.listNodeKeys(x.ipAddress, x.port, '*'));
             
             let arr: string[] = [];
 

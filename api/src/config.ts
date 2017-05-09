@@ -1,3 +1,6 @@
 export var config = {
-    mongoUrl: "mongodb://mongo:27017/redis_manager_prod"
+    mongoUrl: "mongodb://mongo:27017/redis_manager_dev",
+    logging: {
+        path: './'
+    }
 }

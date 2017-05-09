@@ -7,9 +7,8 @@ import * as cors from 'cors';
 import expressWinston = require('express-winston');
 
 // Imports routes
-import { FeaturesRouter } from './routes/features';
-import { GroupsRouter } from './routes/groups';
-import { ProjectsRouter } from './routes/projects';
+import { NodeRouter } from './routes/node';
+import { ClusterRouter } from './routes/cluster';
 
 // Imports logger
 import { logger } from './logger';
@@ -53,19 +52,15 @@ export class RedisManagerApi {
     }
 
     private configureRoutes(app: express.Express) {
-        app.use("/api/projects", new ProjectsRouter().GetRouter());
-        app.use("/api/features", new FeaturesRouter().GetRouter());
-        app.use("/api/groups", new GroupsRouter().GetRouter());
+        app.use("/api/cluster", new ClusterRouter().GetRouter());
+        app.use("/api/node", new NodeRouter().GetRouter());
     }
 
     private configureErrorHandling(app: express.Express) {
         app.use((err: Error, req: express.Request, res: express.Response, next: () => void) => {
             logger.error(err.message);
-            if (err.name === 'UnauthorizedError') {
-                res.status(401).end();
-            } else {
-                res.status(500).send(err.message);
-            }
+
+            res.status(500).send(err.message);
         });
     }
 }
