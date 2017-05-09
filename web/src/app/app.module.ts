@@ -10,6 +10,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { KeysComponent } from './keys/keys.component';
 
+import { ModalModule } from 'angular2-modal';
+import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
+
 
 let router = RouterModule.forRoot([
   {
@@ -33,6 +36,8 @@ let router = RouterModule.forRoot([
     FormsModule,
     HttpModule,
     router,
+    ModalModule.forRoot(),
+    BootstrapModalModule
   ],
   providers: [],
   bootstrap: [AppComponent]

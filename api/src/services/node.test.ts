@@ -10,10 +10,10 @@ import * as redis from 'redis-mock';
 import * as redisIntegration from 'redis';
 
 // Imports services
-import { NodeService } from './../../../../api/src/services/node';
+import { NodeService } from './node';
 
 // Imports models
-import { Node } from './../../../../api/src/models/node';
+import { Node } from './../models/node';
 
 describe('NodeService', () => {
 

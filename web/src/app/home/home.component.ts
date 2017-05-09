@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
 
   refreshNodes() {
 
-    if (this.nodes == null) {
+    if (this.selectedClusterName == null) {
       return;
     }
 

@@ -4,6 +4,9 @@
       <li class="sidebar-brand">
         <a href="/">Redis Manager</a>
       </li>
+      <li>
+        <a href="/" >Back to Home</a>
+      </li>
     </ul>
   </div>
   <div id="page-content-wrapper">
@@ -21,12 +24,19 @@
             <br />
             <label>Memory Used: </label> <span *ngIf="clusterDetails != null">{{clusterDetails.used_memory}} MB</span>
           </div>
-
+          <div class="col-lg-12">
+            <div class="form-group">
+              <label for="pattern">Pattern:</label>
+              <input type="text" [(ngModel)]="pattern" class="form-control" id="pattern">
+            </div>
+            <button class="btn btn-primary" (click)="onClick_Search()">Search</button>
+          </div>
           <div class="col-lg-12">
             <h3>Keys</h3>
+             <img src="/assets/images/loader.gif" height="70" width="70" *ngIf="keys == null" />
             <ul *ngIf="keys != null">
               <li *ngFor="let item of keys">
-                {{item}}
+                <a (click)="onClick_Key(item)">{{item}}</a>
               </li>
             </ul>
           </div>
