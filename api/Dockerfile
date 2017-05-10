@@ -2,7 +2,7 @@ FROM node:6.9.4
 
 RUN npm install pm2 -g
 
-WORKDIR ./feature-toggle-service
+WORKDIR ./redis-manager-service
 
 COPY ./dist ./
 RUN npm install --only=production

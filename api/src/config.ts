@@ -1,6 +1,15 @@
-export var config = {
-    mongoUrl: "mongodb://mongo:27017/redis_manager_dev",
+export let config = {
+    baseUri: 'http://localhost',
+    port: '3000',
+    web: {
+        uri: 'http://localhost',
+        port: '4200'
+    },
     logging: {
-        path: './'
-    }
-}
+        enabled: true,
+        path: './',
+    },
+    db: {
+        uri: 'mongodb://localhost:27017/redismanagerdb'
+    },
+};

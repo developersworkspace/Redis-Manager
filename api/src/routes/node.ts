@@ -23,7 +23,7 @@ export class NodeRouter {
 
     private status(req: Request, res: Response, next: () => void) {
         co(function* () {
-            const nodeService = new NodeService(config.mongoUrl);
+            const nodeService = new NodeService(config.db.uri);
 
             const status: boolean = yield nodeService.status(req.query.ipAddress, req.query.port);
 
