@@ -10,6 +10,9 @@ import 'rxjs/add/operator/catch';
 import { Overlay } from 'angular2-modal';
 import { Modal } from 'angular2-modal/plugins/bootstrap';
 
+// Imports models
+import { ClusterDetails } from './../models/cluster-details';
+
 @Component({
   selector: 'app-keys',
   templateUrl: './keys.component.html',
@@ -18,7 +21,7 @@ import { Modal } from 'angular2-modal/plugins/bootstrap';
 export class KeysComponent implements OnInit {
 
   clusterName: string = null;
-  clusterDetails: any = null;
+  clusterDetails: ClusterDetails = null;
   pattern: string = null;
   keys: string[] = null;
 
@@ -44,12 +47,12 @@ export class KeysComponent implements OnInit {
       return;
     }
 
-    this.http.get(environment.apiUrl + '/cluster/details?clusterName=' + this.clusterName)
+    this.http.get(environment.apiUrl + '/cluster/details?name=' + this.clusterName)
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.clusterDetails = result;
-      }, (err: any) => {
-        console.log(err);
+      }, (err: Error) => {
+       
       });
   }
 
@@ -61,18 +64,18 @@ export class KeysComponent implements OnInit {
       return;
     }
 
-    this.http.get(`${environment.apiUrl}/cluster/listKeys?clusterName=${this.clusterName}&pattern=${this.pattern}`)
+    this.http.get(`${environment.apiUrl}/cluster/listKeys?name=${this.clusterName}&pattern=${this.pattern}`)
       .map((res: Response) => res.json())
       .subscribe((result: any) => {
         this.keys = result;
-      }, (err: any) => {
-        console.log(err);
+      }, (err: Error) => {
+        
       });
   }
 
   onClick_Key(key: string) {
 
-    this.http.get(`${environment.apiUrl}/node/getkey?clusterName=${this.clusterName}&key=${key}`)
+    this.http.get(`${environment.apiUrl}/node/getkey?name=${this.clusterName}&key=${key}`)
       .map((res: Response) => res.text())
       .subscribe((result: any) => {
         this.modal.alert()
@@ -86,8 +89,8 @@ export class KeysComponent implements OnInit {
             `)
           .open();
 
-      }, (err: any) => {
-        console.log(err);
+      }, (err: Error) => {
+        
       });
 
 

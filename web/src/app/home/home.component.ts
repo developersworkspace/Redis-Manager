@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
   selectedCluster: Cluster = null;
   clusterDetails: ClusterDetails = null;
 
+  acceptClearClusterPattern: boolean = false;
   clearClusterPattern: string;
 
   constructor(private http: Http) {
@@ -64,21 +65,15 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    // this.http.get(environment.apiUrl + '/node/find?name=' + this.selectedCluster.name)
-    //   .map((res: Response) => res.json())
-    //   .subscribe((result: any) => {
-    //     this.selectedCluster = result;
-    //     this.updateNodeStatuses();
-    //   }, (err: Error) => {
-    //     
-    //   });
+    this.http.get(environment.apiUrl + '/cluster/find?name=' + this.selectedCluster.name)
+      .map((res: Response) => res.json())
+      .subscribe((result: any) => {
+        this.selectedCluster = result;
+        this.updateNodeStatuses();
+      }, (err: Error) => {
+        
+      });
 
-    this.selectedCluster = new Cluster('Test', [
-      new Node('localhost', 7001, false),
-      new Node('localhost', 7002, false)
-    ]);
-
-    this.updateNodeStatuses();
   }
 
   refreshClusterDetails() {
@@ -97,20 +92,13 @@ export class HomeComponent implements OnInit {
   }
 
   refreshClusters() {
-    // this.http.get(environment.apiUrl + '/cluster/list')
-    //   .map((res: Response) => res.json())
-    //   .subscribe((result: any) => {
-    //     this.clusters = result;
-    //   }, (err: Error) => {
+    this.http.get(environment.apiUrl + '/cluster/list')
+      .map((res: Response) => res.json())
+      .subscribe((result: any) => {
+        this.clusters = result;
+      }, (err: Error) => {
 
-    //   });
-
-    this.clusters = [
-      new Cluster('Test', [
-        new Node('localhost', 7001, false),
-        new Node('localhost', 7002, false)
-      ])
-    ];
+      });
   }
 
   updateNodeStatuses() {
